@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 )
 public class Post {
 
-    @Id
+    @Id //primary key
     @GeneratedValue(
       strategy = GenerationType.IDENTITY
     )

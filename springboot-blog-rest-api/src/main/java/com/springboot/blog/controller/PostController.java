@@ -20,17 +20,12 @@ public class PostController {
     //for loose coupling we inject interface not class as controller depends on services
     private PostService postService;
 
-
-
     public PostController(PostService postService) {
         this.postService = postService;
     }
 
     @PostMapping
     public ResponseEntity<PostDto> createPost(@RequestBody PostDto postDto){
-
         return new ResponseEntity<>(postService.createPost(postDto), HttpStatus.CREATED);
-
-
     }
 }

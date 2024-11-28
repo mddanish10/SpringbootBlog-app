@@ -21,11 +21,10 @@ public class PostServiceImpl implements PostService {
     public PostDto createPost(PostDto postDto) {
         //convert DTO to entity
         Post post= new Post();
-        post.setContent(postDto.getTitle());
+        post.setTitle(postDto.getTitle());
         post.setDescription(postDto.getDescription());
         post.setContent(postDto.getContent());
-
-       Post newPost= (Post) postRepository.save(post);
+        Post newPost=  postRepository.save(post);
 
         //convert entity to DTO
         PostDto postResponse = new PostDto();
@@ -33,10 +32,6 @@ public class PostServiceImpl implements PostService {
         postResponse.setTitle(newPost.getTitle());
         postResponse.setDescription(newPost.getDescription());
         postResponse.setContent(newPost.getContent());
-
-
-
-
         return postResponse;
     }
 }

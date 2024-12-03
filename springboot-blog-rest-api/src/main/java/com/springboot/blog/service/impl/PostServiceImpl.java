@@ -70,7 +70,6 @@ public class PostServiceImpl implements PostService {
         System.out.println("End of getPostById ");
         return mapToDto(updatePost);
     }
-
     @Override
     public void deletePostById(Long id) {
         System.out.println("Start of deletePostById ");

@@ -30,9 +30,12 @@ public class PostController {
 
     //Retriving all the post
     @GetMapping
-    public List<PostDto> getAllPost(){
+    public List<PostDto> getAllPost(
+            @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "10",required = false) int pageSize
+    ){
         System.out.println("Inside getallPost controller");
-        return  postService.getAllPost();
+        return  postService.getAllPost(pageNo,pageSize);
     }
 
     //Retriving the post by id

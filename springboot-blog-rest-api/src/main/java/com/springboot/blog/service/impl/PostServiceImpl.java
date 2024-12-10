@@ -6,6 +6,8 @@ import com.springboot.blog.payload.PostDto;
 import com.springboot.blog.payload.PostResponse;
 import com.springboot.blog.repository.PostRepository;
 import com.springboot.blog.service.PostService;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +20,8 @@ import java.util.stream.Collectors;
 @Service
 public class PostServiceImpl implements PostService {
 
+    @Autowired
+    private ModelMapper modelMapper;
     private PostRepository postRepository;
 
 
@@ -30,9 +34,9 @@ public class PostServiceImpl implements PostService {
 
         //convert DTO to entity
         System.out.println("Start of dto to entity");
-        Post post =mapToEntity(postDto);
+        Post post = mapToEntity(postDto);
         System.out.println("end of dto to entity");
-        Post newPost= postRepository.save(post);
+        Post newPost = postRepository.save(post);
 
         //convert entity to DTO
         System.out.println("Start of entity to dto");
@@ -42,17 +46,17 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostResponse getAllPost(int pageNo, int pageSize, String sortBy,String sortDir) {
+    public PostResponse getAllPost(int pageNo, int pageSize, String sortBy, String sortDir) {
         System.out.println("start in getAllPost");
-        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name())?Sort.by(sortBy).ascending():Sort.by(sortBy).descending();
-       Pageable pageable = PageRequest.of(pageNo,pageSize, sort);
-        Page<Post> posts= postRepository.findAll(pageable);
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Page<Post> posts = postRepository.findAll(pageable);
         //get content from pageobjetc
-        List<Post> listOfPage= posts.getContent();
+        List<Post> listOfPage = posts.getContent();
         System.out.println("medium in getAllPost");
-        List<PostDto> content= listOfPage.stream().map(post -> mapToDto(post)).collect(Collectors.toList());
+        List<PostDto> content = listOfPage.stream().map(post -> mapToDto(post)).collect(Collectors.toList());
 
-        PostResponse postResponse= new PostResponse();
+        PostResponse postResponse = new PostResponse();
         postResponse.setContent(content);
         postResponse.setPageNo(posts.getNumber());
         postResponse.setPageSize(posts.getSize());
@@ -61,14 +65,14 @@ public class PostServiceImpl implements PostService {
         postResponse.setLast(posts.isLast());
 
         System.out.println("End in getAllPost");
-         return postResponse ;
+        return postResponse;
 
     }
 
     @Override
     public PostDto getPostById(Long id) {
         System.out.println("Start of getPostById ");
-      Post post=  postRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("post","id",id));
+        Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("post", "id", id));
         System.out.println("End of getPostById ");
         return mapToDto(post);
     }
@@ -76,41 +80,42 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostDto updatePost(PostDto postDto, Long id) {
         System.out.println("Start of updatePost ");
-        Post post=  postRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("post","id",id));
+        Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("post", "id", id));
         post.setTitle(postDto.getTitle());
         post.setDescription(postDto.getDescription());
         post.setContent(postDto.getContent());
 
-       Post updatePost= postRepository.save(post);
+        Post updatePost = postRepository.save(post);
         System.out.println("End of getPostById ");
         return mapToDto(updatePost);
     }
+
     @Override
     public void deletePostById(Long id) {
         System.out.println("Start of deletePostById ");
-        Post post=  postRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("post","id",id));
+        Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("post", "id", id));
         postRepository.delete(post);
         System.out.println("End of deletPostById ");
     }
 
-
     //Dto to Entity
-
-    private Post mapToEntity(PostDto postDto){
-        Post post= new Post();
-        post.setTitle(postDto.getTitle());
-        post.setDescription(postDto.getDescription());
-        post.setContent(postDto.getContent());
+    private Post mapToEntity(PostDto postDto) {
+        Post post = modelMapper.map(postDto, Post.class);
+//        Post post = new Post();
+//        post.setTitle(postDto.getTitle());
+//        post.setDescription(postDto.getDescription());
+//        post.setContent(postDto.getContent());
         return post;
     }
 
     //Entity to Dto
-    private PostDto mapToDto(Post post){
-        PostDto postResponse = new PostDto();
-        postResponse.setId(post.getId());
-        postResponse.setTitle(post.getTitle());
-        postResponse.setDescription(post.getDescription());
-        postResponse.setContent(post.getContent());
+    private PostDto mapToDto(Post post) {
+        PostDto postResponse = modelMapper.map(post, PostDto.class);
+//        PostDto postResponse = new PostDto();
+//        postResponse.setId(post.getId());
+//        postResponse.setTitle(post.getTitle());
+//        postResponse.setDescription(post.getDescription());
+   //     postResponse.setContent(post.getContent());
         return postResponse;
     }
 }

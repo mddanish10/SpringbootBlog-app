@@ -8,6 +8,7 @@ import com.springboot.blog.repository.PostRepository;
 import com.springboot.blog.service.PostService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,11 +23,13 @@ public class PostServiceImpl implements PostService {
 
     @Autowired
     private ModelMapper modelMapper;
+
     private PostRepository postRepository;
 
 
     public PostServiceImpl(PostRepository postRepository) {
         this.postRepository = postRepository;
+
     }
 
     @Override
@@ -36,7 +39,11 @@ public class PostServiceImpl implements PostService {
         System.out.println("Start of dto to entity");
         Post post = mapToEntity(postDto);
         System.out.println("end of dto to entity");
-        Post newPost = postRepository.save(post);
+        System.out.println("value of id " + post.getId());
+        System.out.println("value of title " + post.getTitle());
+        System.out.println("value of description " + post.getDescription());
+        System.out.println("value of content " + post.getContent());
+        Post newPost = postRepository.save(post); // I belive it is failing here
 
         //convert entity to DTO
         System.out.println("Start of entity to dto");
